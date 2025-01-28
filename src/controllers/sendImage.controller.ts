@@ -12,11 +12,11 @@ class SendImageController {
 
     async uploadImage(req: Request, res: Response): Promise<void> {
         try {
-            const uploadFile = await this.sendImageService.uploadImage(req)
+            const fileUrl = await this.sendImageService.uploadImage(req)
 
             res.status(200).json({
                 message: 'Arquivo recebido com sucesso',
-                fileName: uploadFile.originalname
+                fileUrl: fileUrl
             });
         } catch (error: any) {
             res.status(400).json({ error: error.message })
