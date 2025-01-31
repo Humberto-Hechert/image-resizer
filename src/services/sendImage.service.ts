@@ -30,6 +30,13 @@ class SendImageService {
                     return reject(new Error('Nenhuma imagem enviada'))
                 }
 
+                const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+                const fileExtension = req.file.originalname.split('.').pop()?.toLowerCase();
+
+                if(!fileExtension || !allowedExtensions.includes(`.${fileExtension}`)) {
+                    return reject(new Error('Formato de arquivo inválido'))
+                }
+
                 try {
                     console.log("PROCESSO DE ENVIO DA IMAGEM ORIGINAL PARA O S3")
 
