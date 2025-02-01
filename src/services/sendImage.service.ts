@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-class SendImageService {
+export default class SendImageService {
     private upload: multer.Multer;
     private rabbitMqConfig: RabbitMqConfig;
 
@@ -74,7 +74,5 @@ class SendImageService {
         })
     }
 }
-
-export default SendImageService;
 
 
