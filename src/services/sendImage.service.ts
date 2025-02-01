@@ -1,15 +1,19 @@
 import multer from 'multer';
-import s3 from '../utils/awsConfig';
+import s3 from '../config/awsConfig';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { Request } from 'express';
+import RabbitMqConfig from '../config/rabbitmqConfig';
 import dotenv from 'dotenv';
 dotenv.config();
 
 
 class SendImageService {
     private upload: multer.Multer;
+    private rabbitMqConfig: RabbitMqConfig;
 
-    constructor() {
+    constructor(rabbitMqConfig: RabbitMqConfig) {
+        this.rabbitMqConfig = rabbitMqConfig;
+
         const storage = multer.memoryStorage()
 
         this.upload = multer({
@@ -18,7 +22,7 @@ class SendImageService {
         })
     }
 
-    public uploadImage(req: Request): Promise<string> {
+    public uploadImage(req: Request): Promise<{ imageId: string, location: string }> {
         return new Promise((resolve, reject) => {
             const uploadSingle = this.upload.single('image')
 
@@ -52,8 +56,15 @@ class SendImageService {
                     await s3.send(command);
 
                     const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+
+                    const imageData = {
+                        imageId: fileName,
+                        location: fileUrl
+                    }
+
+                    await this.rabbitMqConfig.sendToQueue(imageData)
     
-                    resolve(fileUrl)
+                    resolve(imageData)
                     console.log("IMAGEM ENVIADA")
                 } catch (error) {
                     console.log("ERRO NO ENVIO DA IMAGEM ORIGINAL AO S3: ", error)
