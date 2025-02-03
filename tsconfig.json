@@ -5,7 +5,9 @@
     "allowJs": true,    
     "esModuleInterop": true,                        
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true                              
+    "skipLibCheck": true,
+    "outDir": "./dist", //especificando o diretorio de saida para quando formos rodar o dockerfile
+    "rootDir": "./src"  //garante que o typescript compile apenas os arquivos na pasta src                        
   },
   "include": [
     "src/**/*.ts"

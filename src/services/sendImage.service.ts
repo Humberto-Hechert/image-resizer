@@ -22,7 +22,7 @@ export default class SendImageService {
         })
     }
 
-    public uploadImage(req: Request): Promise<{ imageId: string, location: string }> {
+    public uploadImage(req: Request): Promise<{ fileName: string, location: string, bucket: string }> {
         return new Promise((resolve, reject) => {
             const uploadSingle = this.upload.single('image')
 
@@ -58,14 +58,15 @@ export default class SendImageService {
                     const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 
                     const imageData = {
-                        imageId: fileName,
-                        location: fileUrl
+                        fileName: fileName,
+                        location: fileUrl,
+                        bucket: process.env.AWS_BUCKET_NAME
                     }
 
                     await this.rabbitMqConfig.sendToQueue(imageData)
     
                     resolve(imageData)
-                    console.log("IMAGEM ENVIADA")
+                    console.log(`IMAGEM ENVIADA - ${imageData.fileName}`)
                 } catch (error) {
                     console.log("ERRO NO ENVIO DA IMAGEM ORIGINAL AO S3: ", error)
                     reject(error)

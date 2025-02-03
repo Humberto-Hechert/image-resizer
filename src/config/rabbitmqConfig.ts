@@ -5,7 +5,7 @@ dotenv.config
 export default class RabbitMqConfig {
     private connection: amqp.Connection | null = null;
     private channel: amqp.Channel | null = null;
-    readonly queueName = process.env.QUEUE_NAME;
+    readonly queueName = process.env.QUEUE_ORIGINAL_IMAGE;
 
     constructor() {}
 
